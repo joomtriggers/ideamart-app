@@ -7,6 +7,13 @@ import (
 )
 
 func main() {
+
+	simple := ideamart.SMS()
+	defer simple.Send()
+	simple.SetMessage("Message")
+	simple.AddReceiver("tel:94771231232")
+
+
 	sms := ideamart.SMS()
 	configuration := map[string]string{
 		"applicationId": "APP_041418",
