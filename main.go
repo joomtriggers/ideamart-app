@@ -2,26 +2,25 @@ package main
 
 import (
 	"net/http"
-	"github.com/joomtriggers/ideamart"
 	"io/ioutil"
-	"github.com/kr/pretty"
+	"github.com/joomtriggers/ideamart"
 )
 
 func main() {
 	sms := ideamart.SMS()
-	smss := sms.Sender
-	smss.SetApplication("APP_041418")
-	smss.SetPassword("23ff355d399a1567e64297e502912fe7")
-	smss.SetServer("https://api.dialog.lk/sms/send/")
-	smss.SetSourceAddress("GOLANGTEST")
+	configuration := map[string]string{
+		"applicationId": "APP_041418",
+		"password":      "23ff355d399a1567e64297e502912fe7",
+		"server":        "https://api.dialog.lk/sms/send/",
+	}
+	sms.Configure(configuration)
+	sms.Sender.SetSourceAddress("GOLANGTEST")
 	http.HandleFunc("/receive/", func(w http.ResponseWriter, r *http.Request) {
-		defer smss.Send()
+		defer sms.Sender.Send()
 		rp, _ := ioutil.ReadAll(r.Body)
-		smsReceiver := sms.Receiver
-		smsReceiver.Receive(rp)
-		smss.AddReceiver(smsReceiver.Sender)
-		smss.SetMessage(smsReceiver.Message)
-		pretty.Print(smsReceiver)
+		sms.Receiver.Receive(rp)
+		sms.Sender.AddReceiver(sms.Receiver.Sender)
+		sms.Sender.SetMessage(sms.Receiver.Message)
 	})
 	http.ListenAndServe(":8084", nil)
 }
