@@ -13,7 +13,7 @@ func main() {
 		"password":      "23ff355d399a1567e64297e502912fe7",
 		"server":        "https://api.dialog.lk/sms/send/",
 	}
-	sms.Configure(configuration)
+	sms.ConfigureMap(configuration)
 	sms.Sender.SetSourceAddress("GOLANGTEST")
 	http.HandleFunc("/receive/", func(w http.ResponseWriter, r *http.Request) {
 		defer sms.Sender.Send()
